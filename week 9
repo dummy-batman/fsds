@@ -1,0 +1,84 @@
+# 1. Generate the service to handle data fetching
+ng generate service services/user
+
+# 2. Generate the profile component to display the data
+ng generate component profile
+
+user.json
+----------
+{
+  "id": 1,
+  "name": "Yamuna",
+  "email": "msg2yamuna@cmritonline.ac.in",
+  "phone": "9292929292",
+  "college": { "name": "CMRIT" }
+}
+
+
+src/app/services/user.service.ts
+-----------------------------------
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private apiUrl = 'user.json'; // Points to the file in the public folder 
+
+  constructor(private http: HttpClient) {}
+
+  getUser(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
+  }
+}
+
+src/app/profile/profile.component.ts
+---------------------------------------
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { UserService } from '../services/user.service';
+
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './profile.component.html'
+})
+export class ProfileComponent implements OnInit {
+  user: any;
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.userService.getUser().subscribe(data => {
+      this.user = data; // Assign fetched data to the user variable 
+    });
+  }
+}
+
+
+(src/app/profile/profile.component.html
+-----------------------------------------
+
+<div *ngIf="user; else loading">
+  <h2>Profile Menu</h2>
+  <p><strong>Name:</strong> {{ user.name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Phone:</strong> {{ user.phone }}</p>
+  <p><strong>College:</strong> {{ user.college?.name }}</p>
+</div>
+<ng-template #loading>
+  <p>Loading user details...</p>
+</ng-template>
+
+src/app/app.config.ts
+------------------------
+import { provideHttpClient, withFetch } from '@angular/common/http';
+// ... other imports
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes), 
+    provideHttpClient(withFetch()) // Important: enables HTTP for the whole app 
+  ]
+};
