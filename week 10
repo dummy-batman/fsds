@@ -27,7 +27,17 @@ function App() {
         </Routes>
       </div>
     </Router>
+
   );
 }
 
 export default App;
+
+
+commands
+
+npx create-react-app cmr 
+cd cmr
+npm install react-router-dom
+npm start
+
