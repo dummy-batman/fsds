@@ -1,0 +1,83 @@
+commands
+# Setup
+python -m venv myenv
+myenv\Scripts\activate
+pip install django
+
+# Creation
+django-admin startproject cmrproject
+cd cmrproject
+python manage.py startapp myCMRapp
+
+# Execution
+python manage.py runserver
+
+
+settings.py
+_____________
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myCMRapp', # Add this line
+]
+
+views.py
+__________
+from django.shortcuts import render
+
+def home(request):
+    return render(request, "menu.html", {"message": "This is Home Page"})
+
+def about(request):
+    return render(request, "menu.html", {"message": "This is About Page"})
+
+def services(request):
+    return render(request, "menu.html", {"message": "This is Services Page"})
+
+def contact(request):
+    return render(request, "menu.html", {"message": "This is Contact Page"})
+
+urls.py
+___________
+from django.contrib import admin
+from django.urls import path
+from myCMRapp import views 
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', views.home),           
+    path('about/', views.about),     
+    path('services/', views.services), 
+    path('contact/', views.contact),   
+]
+
+menu.html
+______________
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django Menu Website</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        nav { background: #333; padding: 10px; }
+        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        .box { margin-top: 50px; padding: 20px; border: 2px solid #333; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h2>CMRIT FSD LAB</h2>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/services/">Services</a>
+        <a href="/contact/">Contact</a>
+    </nav>
+    <div class="box">
+        <h3>{{ message }}</h3>
+    </div>
+</body>
+</html>
